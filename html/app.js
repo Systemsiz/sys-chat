@@ -83,7 +83,7 @@ function addMessage(msg) {
 
     // Mesajın geçmişte (T ekranında) kalıp kalmayacağı kontrolü
     let keepHistory = false;
-    if (msg.templateId === 'me' || msg.templateId === 'do' || msg.isMine) {
+    if (msg.templateId === 'me' || msg.templateId === 'do') {
         keepHistory = true;
     }
 
@@ -152,7 +152,9 @@ chatInput.addEventListener('input', function(e) {
     const val = e.target.value;
     if (val.startsWith('/')) {
         const search = val.toLowerCase();
-        const filtered = commands.filter(c => c.cmd.startsWith(search));
+        let filtered = commands.filter(c => c.cmd.startsWith(search));
+        // Kısadan uzuna sırala
+        filtered.sort((a, b) => a.cmd.length - b.cmd.length);
         showSuggestions(filtered);
     } else {
         hideSuggestions();
@@ -166,8 +168,9 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Enter') {
         const message = chatInput.value.trim();
         if (message.length > 0) {
-            // Add to history
-            if (messageHistory[messageHistory.length - 1] !== message) {
+            // Add to history (me ve do komutları geçmişe eklenmez)
+            const isMeOrDo = message.startsWith('/me ') || message.startsWith('/do ') || message === '/me' || message === '/do';
+            if (!isMeOrDo && messageHistory[messageHistory.length - 1] !== message) {
                 messageHistory.push(message);
                 if (messageHistory.length > 50) messageHistory.shift(); // Keep max 50
             }

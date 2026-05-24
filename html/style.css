@@ -69,16 +69,14 @@ body {
 .message {
     padding: 10px 14px;
     border-radius: 12px;
-    background: var(--bg-glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--border-glass);
+    background: transparent;
+    border: none;
     color: var(--text-main);
     font-size: 14px;
     line-height: 1.4;
     animation: slideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
     word-break: break-word;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 .message.hidden {
@@ -94,17 +92,17 @@ body {
 /* Message Types */
 .msg-say .msg-author { color: #e5e7eb; font-weight: 600; }
 .msg-ooc .msg-author { color: var(--color-ooc); font-weight: 600; }
-.msg-me { background: rgba(217, 70, 239, 0.15); border-left: 3px solid var(--color-me); }
+.msg-me { background: transparent; border-left: 3px solid var(--color-me); }
 .msg-me .msg-author { color: var(--color-me); font-weight: 600; }
-.msg-do { background: rgba(16, 185, 129, 0.15); border-left: 3px solid var(--color-do); }
+.msg-do { background: transparent; border-left: 3px solid var(--color-do); }
 .msg-do .msg-author { color: var(--color-do); font-weight: 600; }
-.msg-police { background: rgba(59, 130, 246, 0.15); border-left: 3px solid var(--color-police); }
+.msg-police { background: transparent; border-left: 3px solid var(--color-police); }
 .msg-police .msg-author { color: var(--color-police); font-weight: 600; }
-.msg-ems { background: rgba(239, 68, 68, 0.15); border-left: 3px solid var(--color-ems); }
+.msg-ems { background: transparent; border-left: 3px solid var(--color-ems); }
 .msg-ems .msg-author { color: var(--color-ems); font-weight: 600; }
-.msg-system { background: rgba(245, 158, 11, 0.15); border-left: 3px solid var(--color-system); }
+.msg-system { background: transparent; border-left: 3px solid var(--color-system); }
 .msg-system .msg-author { color: var(--color-system); font-weight: 600; }
-.msg-anon { background: rgba(31, 41, 55, 0.6); border-left: 3px solid #9ca3af; }
+.msg-anon { background: transparent; border-left: 3px solid #9ca3af; }
 .msg-anon .msg-author { color: #9ca3af; font-weight: 600; }
 
 .msg-author {
