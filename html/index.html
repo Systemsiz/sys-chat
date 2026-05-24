@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sys-chat</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <div class="chat-container">
+            <div class="messages" id="messages-container">
+                <!-- Messages will be injected here -->
+            </div>
+            
+            <div class="input-container" id="input-container">
+                <div class="input-wrapper">
+                    <span class="prefix"></span>
+                    <input type="text" id="chat-input" placeholder="Bir mesaj yazın veya komut girin..." autocomplete="off" spellcheck="false">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
