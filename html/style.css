@@ -32,9 +32,10 @@ body {
     width: 100vw;
     height: 100vh;
     display: flex;
-    align-items: center; /* Vertically centered */
-    justify-content: flex-start; /* Glued to the left */
+    align-items: flex-start; /* Sol üstte hizalama */
+    justify-content: flex-start;
     padding-left: 20px;
+    padding-top: 40px; /* Üstten boşluk */
 }
 
 .chat-container {
@@ -159,4 +160,52 @@ body {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Command Suggestions */
+.suggestions-container {
+    display: none;
+    background: rgba(15, 15, 20, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    margin-bottom: 8px;
+    padding: 8px 0;
+    max-height: 150px;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Hide scrollbar for suggestions */
+.suggestions-container::-webkit-scrollbar {
+    width: 6px;
+}
+.suggestions-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.suggestion-item {
+    padding: 8px 16px;
+    color: var(--text-main);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.suggestion-item.active, .suggestion-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.suggestion-cmd {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.suggestion-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
 }

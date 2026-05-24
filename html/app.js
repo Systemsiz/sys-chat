@@ -6,6 +6,21 @@ const prefixSpan = document.querySelector('.prefix');
 let isChatOpen = false;
 let messageTimeout = 10000; // Mesajların ekranda kalma süresi (ms)
 
+// Message History
+let messageHistory = [];
+let historyIndex = -1;
+
+// Command Suggestions
+const suggestionsContainer = document.getElementById('suggestions-container');
+const commands = [
+    { cmd: '/ooc', desc: 'Karakter Dışı Sohbet' },
+    { cmd: '/me', desc: 'Kişisel bir eylem belirtir' },
+    { cmd: '/do', desc: 'Çevresel bir durumu belirtir' },
+    { cmd: '/police', desc: 'Polis Departmanı Duyurusu' },
+    { cmd: '/ems', desc: 'Sağlık Departmanı Duyurusu' },
+    { cmd: '/anon', desc: 'Anonim Mesaj Gönder' }
+];
+
 window.addEventListener('message', function(event) {
     const item = event.data;
 
@@ -22,6 +37,8 @@ function openChat() {
     chatInput.value = '';
     chatInput.focus();
     prefixSpan.textContent = '>';
+    historyIndex = messageHistory.length;
+    hideSuggestions();
 }
 
 function closeChat() {
@@ -29,6 +46,7 @@ function closeChat() {
     inputContainer.style.display = 'none';
     chatInput.value = '';
     chatInput.blur();
+    hideSuggestions();
     fetch(`https://${GetParentResourceName()}/closeChat`, {
         method: 'POST',
         headers: {
@@ -91,13 +109,58 @@ function escapeHTML(str) {
     );
 }
 
-// Input işlemleri (Enter ve ESC)
+// Suggestions Logic
+function showSuggestions(filteredCommands) {
+    suggestionsContainer.innerHTML = '';
+    if (filteredCommands.length === 0) {
+        hideSuggestions();
+        return;
+    }
+    
+    filteredCommands.forEach(cmdObj => {
+        const item = document.createElement('div');
+        item.classList.add('suggestion-item');
+        item.innerHTML = `<span class="suggestion-cmd">${cmdObj.cmd}</span><span class="suggestion-desc">${cmdObj.desc}</span>`;
+        item.onclick = () => {
+            chatInput.value = cmdObj.cmd + ' ';
+            chatInput.focus();
+            hideSuggestions();
+        };
+        suggestionsContainer.appendChild(item);
+    });
+    
+    suggestionsContainer.style.display = 'block';
+}
+
+function hideSuggestions() {
+    suggestionsContainer.style.display = 'none';
+    suggestionsContainer.innerHTML = '';
+}
+
+chatInput.addEventListener('input', function(e) {
+    const val = e.target.value;
+    if (val.startsWith('/')) {
+        const search = val.toLowerCase();
+        const filtered = commands.filter(c => c.cmd.startsWith(search));
+        showSuggestions(filtered);
+    } else {
+        hideSuggestions();
+    }
+});
+
+// Input işlemleri (Enter, ESC, ArrowUp, ArrowDown)
 document.addEventListener('keydown', function(event) {
     if (!isChatOpen) return;
 
     if (event.key === 'Enter') {
         const message = chatInput.value.trim();
         if (message.length > 0) {
+            // Add to history
+            if (messageHistory[messageHistory.length - 1] !== message) {
+                messageHistory.push(message);
+                if (messageHistory.length > 50) messageHistory.shift(); // Keep max 50
+            }
+            
             fetch(`https://${GetParentResourceName()}/sendMessage`, {
                 method: 'POST',
                 headers: {
@@ -109,5 +172,22 @@ document.addEventListener('keydown', function(event) {
         closeChat();
     } else if (event.key === 'Escape') {
         closeChat();
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        if (historyIndex > 0) {
+            historyIndex--;
+            chatInput.value = messageHistory[historyIndex];
+            hideSuggestions();
+        }
+    } else if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        if (historyIndex < messageHistory.length - 1) {
+            historyIndex++;
+            chatInput.value = messageHistory[historyIndex];
+        } else {
+            historyIndex = messageHistory.length;
+            chatInput.value = '';
+        }
+        hideSuggestions();
     }
 });
