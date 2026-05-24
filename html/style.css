@@ -54,11 +54,23 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    padding: 10px;
     padding-bottom: 15px;
+    border-radius: 12px;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: background 0.3s ease, border 0.3s ease, backdrop-filter 0.3s ease;
     
     /* Hide scrollbar */
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+.chat-container.active .messages {
+    background: rgba(15, 15, 20, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .messages::-webkit-scrollbar {

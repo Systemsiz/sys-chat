@@ -101,7 +101,17 @@ RegisterNUICallback('sendMessage', function(data, cb)
     if message and message ~= "" then
         if string.sub(message, 1, 1) == "/" then
             -- Bu bir komut
-            ExecuteCommand(string.sub(message, 2))
+            local cmdName = string.match(message, "^/([^%s]+)")
+            local rest = string.match(message, "^/[^%s]+%s+(.*)") or ""
+            
+            if cmdName == "/me" or cmdName == "/do" then
+                -- Başka scriptlerin /me veya /do komutunu ezip chatte görünmesini engellemesine karşı doğrudan sys-chat'e gönder:
+                TriggerServerEvent('sys-chat:server:RoleplayCommand', string.sub(cmdName, 2), rest)
+                -- İsteğe bağlı olarak diğer scriptler (3d text vs) için de ExecuteCommand çalıştırılır:
+                ExecuteCommand(string.sub(message, 2))
+            else
+                ExecuteCommand(string.sub(message, 2))
+            end
         else
             -- Normal mesaj ise yakındaki oyunculara yolla (Say)
             TriggerServerEvent('sys-chat:server:SendMessage', "say", message)

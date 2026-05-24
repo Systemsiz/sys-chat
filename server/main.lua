@@ -44,6 +44,23 @@ RegisterNetEvent('sys-chat:server:SendMessage', function(type, message)
     end
 end)
 
+-- Roleplay Komutları (/me, /do) için Doğrudan Event (Diğer scriptlerin ezmesini önlemek için)
+RegisterNetEvent('sys-chat:server:RoleplayCommand', function(type, message)
+    local src = source
+    local name = GetCharacterName(src)
+    
+    if type == "me" or type == "do" then
+        local msgData = {
+            templateId = type,
+            author = name,
+            text = message,
+            senderId = src
+        }
+
+        SendProximityMessage(src, Config.RoleplayProximity, msgData)
+    end
+end)
+
 -- Komut Listesini İstemciye Gönderme
 QBCore.Functions.CreateCallback('sys-chat:server:GetCommands', function(source, cb)
     local cmds = {}
