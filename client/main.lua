@@ -1,6 +1,26 @@
 local QBCore = exports[Config.CoreName]:GetCoreObject()
 local isChatActive = false
 
+-- Komutları sunucudan çekip NUI'ye yollama
+local function RefreshCommands()
+    QBCore.Functions.TriggerCallback('sys-chat:server:GetCommands', function(cmds)
+        SendNUIMessage({
+            type = 'LOAD_COMMANDS',
+            commands = cmds
+        })
+    end)
+end
+
+RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    RefreshCommands()
+end)
+
+-- Script restart yediğinde vs. (oyuncu zaten oyundaysa)
+CreateThread(function()
+    Wait(1000)
+    RefreshCommands()
+end)
+
 -- Chat'i açma tuşu
 RegisterNetEvent('sys-chat:client:openChat', function()
     if not isChatActive then
@@ -41,8 +61,8 @@ RegisterNUICallback('sendMessage', function(data, cb)
             -- Bu bir komut
             ExecuteCommand(string.sub(message, 2))
         else
-            -- Normal mesaj ise OOC olarak yolla (varsayılan davranış)
-            TriggerServerEvent('sys-chat:server:SendMessage', "ooc", message)
+            -- Normal mesaj ise yakındaki oyunculara yolla (Say)
+            TriggerServerEvent('sys-chat:server:SendMessage', "say", message)
         end
     end
 

@@ -86,7 +86,13 @@ body {
     transition: opacity 0.5s ease-out;
 }
 
+.chat-container.active .message.hidden {
+    opacity: 1 !important;
+    transition: opacity 0.2s ease-in;
+}
+
 /* Message Types */
+.msg-say .msg-author { color: #e5e7eb; font-weight: 600; }
 .msg-ooc .msg-author { color: var(--color-ooc); font-weight: 600; }
 .msg-me { background: rgba(217, 70, 239, 0.15); border-left: 3px solid var(--color-me); }
 .msg-me .msg-author { color: var(--color-me); font-weight: 600; }

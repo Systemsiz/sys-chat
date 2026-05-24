@@ -12,14 +12,7 @@ let historyIndex = -1;
 
 // Command Suggestions
 const suggestionsContainer = document.getElementById('suggestions-container');
-const commands = [
-    { cmd: '/ooc', desc: 'Karakter Dışı Sohbet' },
-    { cmd: '/me', desc: 'Kişisel bir eylem belirtir' },
-    { cmd: '/do', desc: 'Çevresel bir durumu belirtir' },
-    { cmd: '/police', desc: 'Polis Departmanı Duyurusu' },
-    { cmd: '/ems', desc: 'Sağlık Departmanı Duyurusu' },
-    { cmd: '/anon', desc: 'Anonim Mesaj Gönder' }
-];
+let commands = [];
 
 window.addEventListener('message', function(event) {
     const item = event.data;
@@ -28,11 +21,14 @@ window.addEventListener('message', function(event) {
         openChat();
     } else if (item.type === 'ON_MESSAGE') {
         addMessage(item.message);
+    } else if (item.type === 'LOAD_COMMANDS') {
+        commands = item.commands;
     }
 });
 
 function openChat() {
     isChatOpen = true;
+    document.querySelector('.chat-container').classList.add('active');
     inputContainer.style.display = 'block';
     chatInput.value = '';
     chatInput.focus();
@@ -43,6 +39,7 @@ function openChat() {
 
 function closeChat() {
     isChatOpen = false;
+    document.querySelector('.chat-container').classList.remove('active');
     inputContainer.style.display = 'none';
     chatInput.value = '';
     chatInput.blur();
@@ -63,7 +60,7 @@ function addMessage(msg) {
     if (msg.templateId) {
         msgElement.classList.add(`msg-${msg.templateId}`);
     } else {
-        msgElement.classList.add('msg-ooc'); // Default
+        msgElement.classList.add('msg-say'); // Default
     }
 
     let innerHTML = '';
@@ -87,13 +84,12 @@ function addMessage(msg) {
     // Belirli bir süre sonra mesajı gizle (opacity ile)
     setTimeout(() => {
         msgElement.classList.add('hidden');
-        // İsteğe bağlı olarak DOM'dan tamamen temizlenebilir
-        setTimeout(() => {
-            if(messagesContainer.contains(msgElement)) {
-                msgElement.remove();
-            }
-        }, 500); // fade-out süresi
     }, messageTimeout);
+    
+    // Mesaj sayısını sınırla (Sürekli DOM büyümesini engelle)
+    if (messagesContainer.children.length > 100) {
+        messagesContainer.removeChild(messagesContainer.firstChild);
+    }
 }
 
 // Güvenlik için HTML taglarını engelleme

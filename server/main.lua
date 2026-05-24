@@ -32,40 +32,30 @@ RegisterNetEvent('sys-chat:server:SendMessage', function(type, message)
     local src = source
     local name = GetCharacterName(src)
 
-    if type == "ooc" then
+    if type == "say" then
         local msgData = {
-            templateId = "ooc",
-            author = "OOC | " .. GetPlayerName(src),
+            templateId = "say",
+            author = name,
             text = message
         }
 
-        if Config.OOCProximity then
-            SendProximityMessage(src, Config.OOCProximity, msgData)
-        else
-            TriggerClientEvent('sys-chat:client:addMessage', -1, msgData)
-        end
+        SendProximityMessage(src, Config.RoleplayProximity, msgData)
     end
+end)
+
+-- Komut Listesini İstemciye Gönderme
+QBCore.Functions.CreateCallback('sys-chat:server:GetCommands', function(source, cb)
+    local cmds = {}
+    for cmdName, cmdData in pairs(QBCore.Commands.List) do
+        table.insert(cmds, {
+            cmd = "/" .. cmdName,
+            desc = cmdData.help or "Komut"
+        })
+    end
+    cb(cmds)
 end)
 
 -- Komutlar
-
--- /ooc
-QBCore.Commands.Add('ooc', 'OOC Sohbet (Karakter Dışı)', {{name = 'mesaj', help = 'Gönderilecek mesaj'}}, false, function(source, args)
-    local src = source
-    local message = table.concat(args, " ")
-    
-    local msgData = {
-        templateId = "ooc",
-        author = "OOC | " .. GetPlayerName(src),
-        text = message
-    }
-
-    if Config.OOCProximity then
-        SendProximityMessage(src, Config.OOCProximity, msgData)
-    else
-        TriggerClientEvent('sys-chat:client:addMessage', -1, msgData)
-    end
-end)
 
 -- /me
 QBCore.Commands.Add('me', 'Kişisel bir eylem belirtir (Rol)', {{name = 'eylem', help = 'Yapılan eylem'}}, false, function(source, args)
