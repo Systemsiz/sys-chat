@@ -81,9 +81,24 @@ function addMessage(msg) {
     // Otomatik aşağı kaydır
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
+    // Mesajın geçmişte (T ekranında) kalıp kalmayacağı kontrolü
+    let keepHistory = false;
+    if (msg.templateId === 'me' || msg.templateId === 'do' || msg.isMine) {
+        keepHistory = true;
+    }
+
     // Belirli bir süre sonra mesajı gizle (opacity ile)
     setTimeout(() => {
         msgElement.classList.add('hidden');
+        
+        // Eğer geçmişte kalmayacaksa tamamen DOM'dan sil
+        if (!keepHistory) {
+            setTimeout(() => {
+                if(messagesContainer.contains(msgElement)) {
+                    msgElement.remove();
+                }
+            }, 500); // CSS fade out süresi
+        }
     }, messageTimeout);
     
     // Mesaj sayısını sınırla (Sürekli DOM büyümesini engelle)

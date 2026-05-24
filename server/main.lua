@@ -36,7 +36,8 @@ RegisterNetEvent('sys-chat:server:SendMessage', function(type, message)
         local msgData = {
             templateId = "say",
             author = name,
-            text = message
+            text = message,
+            senderId = src
         }
 
         SendProximityMessage(src, Config.RoleplayProximity, msgData)
@@ -66,7 +67,8 @@ QBCore.Commands.Add('me', 'Kişisel bir eylem belirtir (Rol)', {{name = 'eylem',
     local msgData = {
         templateId = "me",
         author = name,
-        text = message
+        text = message,
+        senderId = src
     }
 
     SendProximityMessage(src, Config.RoleplayProximity, msgData)
@@ -81,7 +83,8 @@ QBCore.Commands.Add('do', 'Çevresel bir durumu belirtir (Rol)', {{name = 'durum
     local msgData = {
         templateId = "do",
         author = name,
-        text = message
+        text = message,
+        senderId = src
     }
 
     SendProximityMessage(src, Config.RoleplayProximity, msgData)
@@ -97,7 +100,8 @@ QBCore.Commands.Add('police', 'Polis Departmanı Duyurusu', {{name = 'mesaj', he
         local msgData = {
             templateId = "police",
             author = "LSPD Duyuru",
-            text = message
+            text = message,
+            senderId = src
         }
         TriggerClientEvent('sys-chat:client:addMessage', -1, msgData)
     else
@@ -115,7 +119,8 @@ QBCore.Commands.Add('ems', 'Sağlık Departmanı Duyurusu', {{name = 'mesaj', he
         local msgData = {
             templateId = "ems",
             author = "EMS Duyuru",
-            text = message
+            text = message,
+            senderId = src
         }
         TriggerClientEvent('sys-chat:client:addMessage', -1, msgData)
     else
@@ -131,7 +136,8 @@ QBCore.Commands.Add('anon', 'Anonim Mesaj Gönder', {{name = 'mesaj', help = 'G�
     local msgData = {
         templateId = "anon",
         author = "Anonim",
-        text = message
+        text = message,
+        senderId = src
     }
 
     TriggerClientEvent('sys-chat:client:addMessage', -1, msgData)

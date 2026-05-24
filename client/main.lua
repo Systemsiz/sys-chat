@@ -2,14 +2,56 @@ local QBCore = exports[Config.CoreName]:GetCoreObject()
 local isChatActive = false
 
 -- Komutları sunucudan çekip NUI'ye yollama
+local customSuggestions = {}
+
 local function RefreshCommands()
     QBCore.Functions.TriggerCallback('sys-chat:server:GetCommands', function(cmds)
+        -- Sunucudan gelen QBCore komutları ile diğer scriptlerin (chat:addSuggestion) komutlarını birleştir
+        local finalCommands = {}
+        local added = {}
+
+        for _, cmd in ipairs(cmds) do
+            table.insert(finalCommands, cmd)
+            added[cmd.cmd] = true
+        end
+
+        for cmdName, helpText in pairs(customSuggestions) do
+            if not added[cmdName] then
+                table.insert(finalCommands, {
+                    cmd = cmdName,
+                    desc = helpText
+                })
+                added[cmdName] = true
+            end
+        end
+
         SendNUIMessage({
             type = 'LOAD_COMMANDS',
-            commands = cmds
+            commands = finalCommands
         })
     end)
 end
+
+-- Diğer scriptlerin eklediği komut önerilerini yakalama
+RegisterNetEvent('chat:addSuggestion', function(name, help, params)
+    local cmdName = name
+    if string.sub(cmdName, 1, 1) ~= "/" then
+        cmdName = "/" .. cmdName
+    end
+    customSuggestions[cmdName] = help or "Komut"
+    RefreshCommands()
+end)
+
+RegisterNetEvent('chat:addSuggestions', function(suggestions)
+    for _, sug in ipairs(suggestions) do
+        local cmdName = sug.name
+        if string.sub(cmdName, 1, 1) ~= "/" then
+            cmdName = "/" .. cmdName
+        end
+        customSuggestions[cmdName] = sug.help or "Komut"
+    end
+    RefreshCommands()
+end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
     RefreshCommands()
@@ -73,6 +115,12 @@ end)
 
 -- Sunucudan gelen mesajı UI'a yollama
 RegisterNetEvent('sys-chat:client:addMessage', function(messageData)
+    if messageData.senderId == GetPlayerServerId(PlayerId()) then
+        messageData.isMine = true
+    else
+        messageData.isMine = false
+    end
+
     SendNUIMessage({
         type = 'ON_MESSAGE',
         message = messageData
